@@ -9,15 +9,22 @@
 console.log("Game")
 
 // Some constants that will be used in this script
-const WIDTH = 600
+const GAME_WIDTH = 600
+const GAME_HEIGHT = 600
+const WIDTH = 645
 const HEIGHT = 600
 const LINE_SIZE = 10
-
 
 // Some variables that will be used in this script
 var ctx
 var linesLocation = -4
 var linesSpeed = 2
+
+var muted = 1
+var audioImage = new Image()
+audioImage.src = "Audio.png"
+var audioMutedImage = new Image()
+audioMutedImage.src = "Audio_Muted.png"
 
 window.onload=startCanvas
 
@@ -37,20 +44,27 @@ function updateCanvas(){
 	// It is run once every frame. Most of the game code will go here
 	
 	// Clear the frame
-	ctx.fillStyle="white"
-	ctx.fillRect(0,0,WIDTH, HEIGHT)
+	ctx.fillStyle="#ffffff"
+	ctx.fillRect(0,0,WIDTH,HEIGHT)
 	
 	// Draw the two main lines
 	ctx.fillStyle="black"
-	ctx.fillRect(0,linesLocation,HEIGHT,LINE_SIZE)
-	ctx.fillRect(linesLocation, 0, LINE_SIZE, WIDTH)
+	ctx.fillRect(0,linesLocation,GAME_HEIGHT,LINE_SIZE)
+	ctx.fillRect(linesLocation, 0, LINE_SIZE, GAME_WIDTH)
 	linesLocation = linesLocation + linesSpeed
 
 	// changes the line speed when the lines hit edge of the canvas
-	if (linesLocation > HEIGHT-5 || linesLocation < -5) {
+	if (linesLocation > GAME_HEIGHT-5 || linesLocation < -5) {
 		linesSpeed = linesSpeed*-1
 	}
-	// if (lineLocation < -5) {
-	// 	lineSpeed = 2
-	// }
+
+	// checks if audio should be muted or not
+	if (muted == 1) {
+		ctx.drawImage(audioMutedImage, WIDTH-33, 5) // Set the audio icon to the muted image when 
+	} else {
+		ctx.drawImage(audioImage, WIDTH-33, 5)
+	}
+
+	ctx.fillStyle="#c00000"
+	ctx.fillRect(GAME_WIDTH, 0, 6, GAME_HEIGHT)
 }
