@@ -20,10 +20,12 @@ var ctx
 var linesLocation = -4
 var linesSpeed = 2
 var gamePaused = false
+var healthLeft = 3
+var misses = 0
 
 var muted = 1
 var audioImage = new Image()
-audioImage.src = "Audio_Muted.png"
+var healthLeftImage = new Image()
 
 window.onload=startCanvas
 
@@ -63,16 +65,22 @@ function updateCanvas(){
 	} else {
 		console.log("An error seems to have occured, please pause and unpause the game to continue")
 	}
-	// checks if audio should be muted or not
-	if (muted == 1) {
-		audioImage.src = "Audio_Muted.png" // set the audio icon to
-	} else {
-		audioImage.src = "Audio.png"
-	}
-	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
 
 	// Draws the border between the main game and 
 	ctx.fillStyle="#c00000"
 	ctx.fillRect(GAME_WIDTH, 0, 6, GAME_HEIGHT)
-	
+
+	// checks if audio should be muted or not
+	if (muted == 1) {
+		audioImage.src = "AudioImages/Audio_Muted.png" // set the audio icon to
+	} else {
+		audioImage.src = "AudioImages/Audio.png"
+	}
+	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
+
+	healthLeftImage.src = "HealthImages/" + healthLeft + "HealthLeft.png"
+	ctx.drawImage(healthLeftImage, WIDTH-33, HEIGHT-35) // Draw the audio icon that has been set
+	ctx.fillStyle="green"
+	ctx.fillText(misses+"/3", WIDTH-26, HEIGHT-50)
+	ctx.fillText("misses", WIDTH-35, HEIGHT-40)
 }
