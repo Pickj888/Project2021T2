@@ -19,12 +19,11 @@ const LINE_SIZE = 10
 var ctx
 var linesLocation = -4
 var linesSpeed = 2
+var gamePaused = false
 
 var muted = 1
 var audioImage = new Image()
-audioImage.src = "Audio.png"
-var audioMutedImage = new Image()
-audioMutedImage.src = "Audio_Muted.png"
+audioImage.src = "Audio_Muted.png"
 
 window.onload=startCanvas
 
@@ -46,25 +45,34 @@ function updateCanvas(){
 	// Clear the frame
 	ctx.fillStyle="#ffffff"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)
-	
+
 	// Draw the two main lines
 	ctx.fillStyle="black"
 	ctx.fillRect(0,linesLocation,GAME_HEIGHT,LINE_SIZE)
 	ctx.fillRect(linesLocation, 0, LINE_SIZE, GAME_WIDTH)
-	linesLocation = linesLocation + linesSpeed
 
-	// changes the line speed when the lines hit edge of the canvas
-	if (linesLocation > GAME_HEIGHT-5 || linesLocation < -5) {
-		linesSpeed = linesSpeed*-1
+	if (gamePaused == true) {
+
+	} else if (gamePaused == false) {
+		linesLocation = linesLocation + linesSpeed
+		
+		// changes the line speed when the lines hit edge of the canvas
+		if (linesLocation > GAME_HEIGHT-5 || linesLocation < -5) {
+			linesSpeed = linesSpeed*-1
+		}
+	} else {
+		console.log("An error seems to have occured, please pause and unpause the game to continue")
 	}
-
 	// checks if audio should be muted or not
 	if (muted == 1) {
-		ctx.drawImage(audioMutedImage, WIDTH-33, 5) // Set the audio icon to the muted image when 
+		audioImage.src = "Audio_Muted.png" // set the audio icon to
 	} else {
-		ctx.drawImage(audioImage, WIDTH-33, 5)
+		audioImage.src = "Audio.png"
 	}
+	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
 
+	// Draws the border between the main game and 
 	ctx.fillStyle="#c00000"
 	ctx.fillRect(GAME_WIDTH, 0, 6, GAME_HEIGHT)
+	
 }
