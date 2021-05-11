@@ -19,13 +19,16 @@ const LINE_SIZE = 10
 var ctx
 var linesLocation = -4
 var linesSpeed = 2
-var gamePaused = false
+var gamePaused = 0
 var healthLeft = 3
 var misses = 0
 
+
 var muted = 1
+// adding image variables
 var audioImage = new Image()
 var healthLeftImage = new Image()
+var playPauseButtons = new Image()
 
 window.onload=startCanvas
 
@@ -53,9 +56,9 @@ function updateCanvas(){
 	ctx.fillRect(0,linesLocation,GAME_HEIGHT,LINE_SIZE)
 	ctx.fillRect(linesLocation, 0, LINE_SIZE, GAME_WIDTH)
 
-	if (gamePaused == true) {
+	if (gamePaused == 1) {
 
-	} else if (gamePaused == false) {
+	} else if (gamePaused == 0) {
 		linesLocation = linesLocation + linesSpeed
 		
 		// changes the line speed when the lines hit edge of the canvas
@@ -63,7 +66,7 @@ function updateCanvas(){
 			linesSpeed = linesSpeed*-1
 		}
 	} else {
-		console.log("An error seems to have occured, please pause and unpause the game to continue")
+		console.log("Your game has been set to not be paused or unpaused, please pause and unpause the game to continue playing")
 	}
 
 	// Draws the border between the main game and 
@@ -78,9 +81,15 @@ function updateCanvas(){
 	}
 	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
 
+	playPauseButtons.src = "PlayButtonImages/" + gamePaused + ".png"
+	ctx.drawImage(playPauseButtons, WIDTH-33, 38) // Draw the audio icon that has been set
+
 	healthLeftImage.src = "HealthImages/" + healthLeft + "HealthLeft.png"
 	ctx.drawImage(healthLeftImage, WIDTH-33, HEIGHT-35) // Draw the audio icon that has been set
 	ctx.fillStyle="green"
-	ctx.fillText(misses+"/3", WIDTH-26, HEIGHT-50)
-	ctx.fillText("misses", WIDTH-35, HEIGHT-40)
+	ctx.fillText(misses+"/3", WIDTH-26, HEIGHT-70)
+	ctx.fillText("misses", WIDTH-35, HEIGHT-60)
+	ctx.fillText("-----------", WIDTH-38, HEIGHT-50)
+	healthLeft = 3 - misses
+	ctx.fillText(healthLeft + " health", WIDTH-37, HEIGHT-40)
 }
