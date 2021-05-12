@@ -37,6 +37,7 @@ function startCanvas(){
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	
 	// Call the loadIcons funtion to load the icons (for some reason function is broken when called here)
+	clearLoad = setInterval(clearcanvas, 16)
 	clearLoad = setInterval(loadIcons, 16)
 }
 
@@ -63,9 +64,7 @@ function updateCanvas(){
 	// The updateCanvas() function contains the main game loop
 	// It is run once every frame. Most of the game code will go here
 
-	// Clear the frame
-	ctx.fillStyle="#ffffff"
-	ctx.fillRect(0,0,WIDTH,HEIGHT)
+	clearcanvas()
 
 	// Set the colour for the lines to black
 	ctx.fillStyle="black"
@@ -82,16 +81,19 @@ function updateCanvas(){
 			linesSpeed = linesSpeed*-1
 		}
 	} else {
+
 	}
 	// Call the loadIcons funtion to load the icons
 	loadIcons()
 }
 
-function loadIcons() {
-	// Clear the icon section of the frame
+function clearcanvas() {
+	// Clear the frame
 	ctx.fillStyle="#ffffff"
-	ctx.fillRect(GAME_WIDTH,0,WIDTH-GAME_WIDTH,HEIGHT)
+	ctx.fillRect(0,0,WIDTH,HEIGHT)
+}
 
+function loadIcons() {
 	// Draws the border between the main game and 
 	ctx.fillStyle="#c00000"
 	ctx.fillRect(GAME_WIDTH, 0, 6, GAME_HEIGHT)
