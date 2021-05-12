@@ -1,6 +1,6 @@
 /**
 * Title:
-* Author: Seb White
+* Author: Seb W
 * Date:
 * Version: 1
 * Purpose:
@@ -19,10 +19,9 @@ const LINE_SIZE = 10
 var ctx
 var linesLocation = -4
 var linesSpeed = 2
-var gamePaused = 0
+var gameActive = 0
 var healthLeft = 3
 var misses = 0
-
 
 var muted = 1
 // adding image variables
@@ -31,34 +30,46 @@ var healthLeftImage = new Image()
 var playPauseButtons = new Image()
 
 window.onload=startCanvas
-
 function startCanvas(){
 	// The startCanvas() function sets up the game. 
 	// This is where all of the once off startup stuff should go
 	
 	ctx=document.getElementById("myCanvas").getContext("2d")
-	// This timer sets the framerate.
-	// 10 means 10 milliseconds between frames (100 frames per second)
-	timer = setInterval(updateCanvas, 16)
+	
+	loadIcons()
+}
 
+window.addEventListener('keydown', keyDownFunction)
+function keyDownFunction(keyboardEvent){
+	var keyDown = keyboardEvent.key
+	console.log("A key was pressed, the key was", keyDown)
+	if (gameActive == 0) {
+		gameActive = 1
+		// This timer sets the framerate.
+		// 10 means 10 milliseconds between frames (100 frames per second)
+		timer = setInterval(updateCanvas, 16)
+	} else if (keyDown == "Escape") {
+		console.log("Escape pressed")
+		gameActive = 0
+	}
+	
 }
 
 function updateCanvas(){
 	// The updateCanvas() function contains the main game loop
 	// It is run once every frame. Most of the game code will go here
-	
+
 	// Clear the frame
 	ctx.fillStyle="#ffffff"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)
 
-	// Draw the two main lines
+	// Set the colour for the lines to black
 	ctx.fillStyle="black"
+	// Draw the two main lines
 	ctx.fillRect(0,linesLocation,GAME_HEIGHT,LINE_SIZE)
 	ctx.fillRect(linesLocation, 0, LINE_SIZE, GAME_WIDTH)
-
-	if (gamePaused == 1) {
-
-	} else if (gamePaused == 0) {
+	
+	if (gameActive == 1) {
 		linesLocation = linesLocation + linesSpeed
 		
 		// changes the line speed when the lines hit edge of the canvas
@@ -66,9 +77,12 @@ function updateCanvas(){
 			linesSpeed = linesSpeed*-1
 		}
 	} else {
-		console.log("Your game has been set to not be paused or unpaused, please pause and unpause the game to continue playing")
-	}
 
+	}
+	loadIcons()
+}
+
+function loadIcons() {
 	// Draws the border between the main game and 
 	ctx.fillStyle="#c00000"
 	ctx.fillRect(GAME_WIDTH, 0, 6, GAME_HEIGHT)
@@ -81,7 +95,7 @@ function updateCanvas(){
 	}
 	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
 
-	playPauseButtons.src = "PlayButtonImages/" + gamePaused + ".png"
+	playPauseButtons.src = "PlayButtonImages/" + gameActive + ".png"
 	ctx.drawImage(playPauseButtons, WIDTH-33, 38) // Draw the audio icon that has been set
 
 	healthLeftImage.src = "HealthImages/" + healthLeft + "HealthLeft.png"
