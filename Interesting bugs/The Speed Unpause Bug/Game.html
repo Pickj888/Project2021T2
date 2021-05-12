@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html lang=en>
+<head>
+  <title>SU bug</title>
+  <script src="proj.js"></script>
+
+</head>
+<body>
+
+<canvas id="myCanvas" width="500" height="500" style="border:5px solid #c00000;">
+Your browser does not support the canvas element.
+</canvas>
+  <h1>The Speed Unpausing Bug</h1>
+  <p>The Speed Unpausing Bug (I call it The SU Bug for short) is a bug that is caused by pausing an unpausing the game repeatedly</p>
+  <p>The bug is caused everytime the game is unpaused. When the game is unpaused the game sets the "gameActive" variable to true and</p>
+  <p>adds another set of frames into the frames that are already being played, so instead of one frame every 16ms per frame</p>
+  <p>there will be another frame in those 16ms for everytime you unpause the game.<br></p>
+  <p>Try this out! Press any key to start the programme and use escape to pause it then any key to unpause it again.</p>
+  <p>This can be repeated as often as your computer can handle.</p>
+</body>
+</html>

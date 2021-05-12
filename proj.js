@@ -22,9 +22,9 @@ var linesSpeed = 2
 var gameActive = 0
 var healthLeft = 3
 var misses = 0
-
 var muted = 1
-// adding image variables
+var gameStarted = 0
+// Image variables
 var audioImage = new Image()
 var healthLeftImage = new Image()
 var playPauseButtons = new Image()
@@ -47,7 +47,10 @@ function keyDownFunction(keyboardEvent){
 		gameActive = 1
 		// This timer sets the framerate.
 		// 10 means 10 milliseconds between frames (100 frames per second)
-		timer = setInterval(updateCanvas, 16)
+		if (gameStarted == 0) {
+			timer = setInterval(updateCanvas, 16)
+			gameStarted = 1
+		}
 	} else if (keyDown == "Escape") {
 		console.log("Escape pressed")
 		gameActive = 0
