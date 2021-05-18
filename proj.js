@@ -24,10 +24,15 @@ var healthLeft = 3
 var misses = 0
 var muted = 1
 var gameStarted = 0
+var alphaPause = 0
 // Image variables
 var audioImage = new Image()
 var healthLeftImage = new Image()
 var playPauseButtons = new Image()
+var pausedBorder = new Image()
+
+// image sources that will not change
+pausedBorder.src = "Paused_Border.png" // set the audio icon to
 
 window.onload=startCanvas
 function startCanvas(){
@@ -56,6 +61,7 @@ function keyDownFunction(keyboardEvent){
 	} else if (keyDown == "Escape") {
 		console.log("Escape pressed")
 		gameActive = 0
+		alphaPause = 0
 	}
 }
 
@@ -64,7 +70,7 @@ function updateCanvas(){
 	// It is run once every frame. Most of the game code will go here
 
 	// Clear the frame
-	ctx.fillStyle="#ffffff"
+	ctx.fillStyle="#ffffff50"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)
 
 	// Set the colour for the lines to black
@@ -82,6 +88,25 @@ function updateCanvas(){
 			linesSpeed = linesSpeed*-1
 		}
 	} else {
+		//Change and set the alpha, this will create a fade in effect
+		if (alphaPause < 1) {
+			alphaPause = alphaPause + 0.2
+		}
+		ctx.globalAlpha=alphaPause
+		// create a box to hold all of the paused text
+		ctx.fillStyle="#ffffffe0"
+		ctx.fillRect(35, 35, GAME_HEIGHT-70, GAME_WIDTH-70)
+		ctx.drawImage(pausedBorder, 25, 25) // Draw the audio icon that has been set
+		// Write all of the text over the paused box
+		ctx.fillStyle="#000000a0"
+		ctx.font="50px Arial"
+		ctx.fillText("GAME PAUSED", 125, 85)
+
+		ctx.fillStyle="#0000ff"
+		ctx.font="9px Arial"
+		ctx.fillText("If you did not pause the game an error has likely occured, please hit escape once or twice. If the problem persists please", 47, 553)
+		ctx.fillText("reload the page, if the problem still happens then please report this to the owner with any errors shown in the console.", 57, 563)
+		ctx.globalAlpha = 1
 	}
 	// Call the loadIcons funtion to load the icons
 	loadIcons()
@@ -108,7 +133,9 @@ function loadIcons() {
 	ctx.drawImage(playPauseButtons, WIDTH-33, 38) // Draw the audio icon that has been set
 
 	healthLeftImage.src = "HealthImages/" + healthLeft + "HealthLeft.png"
-	ctx.drawImage(healthLeftImage, WIDTH-33, HEIGHT-35) // Draw the audio icon that has been set
+	ctx.drawImage(healthLeftImage, WIDTH-34, HEIGHT-35) // Draw the audio icon that has been set
+	// Text for all your health info
+	ctx.font="10px Arial"
 	ctx.fillStyle="green"
 	ctx.fillText(misses+"/3", WIDTH-26, HEIGHT-70)
 	ctx.fillText("misses", WIDTH-35, HEIGHT-60)
