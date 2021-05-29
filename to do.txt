@@ -1,0 +1,9 @@
+This is a list of features I am planning to add or bugs that I have or will fix in the future
+
+
+The following will be a list of bugs that have happened or are happening that I know about
+
+1. Pausing game speeds it up (Found:11/05/20 - Fixed:12/05/20 - Bug fixed on first attempt)
+2. Icons won't load until the game starts (Found:11/05/20 - First attempted fix:12/05/20 - Fixed:12/05/20)
+3. Setting misses outside of the health range will cause errors and break the game (Found:14/05/20 - First attempted fix:20/05/20 - Fixed:20/05/20 )
+3. Circles only flash when they are generated (Found:29/05/20 - First attempted fix:29/05/20 - Not currently fixed)
