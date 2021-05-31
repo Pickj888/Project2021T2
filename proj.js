@@ -20,22 +20,24 @@ const CIRCLE_RADIUS = 0
 
 // Some variables that will be used in this script
 var ctx
+
 var score = 0
 var combo = 0
 var clicsTopScore = window.localStorage.getItem('clicsTopScore');
+var framesToCircleSpawn = 62
 var circleXPosition
 var circleYPosition
-var mouseXPosition
-var mouseYPosition
-var linesPosition = -4
+var linesPositions = -4
 var linesSpeed = 2
+var lineMovement = "down"
 var gameActive = 0
+var gameStarted = 0
 var healthLeft = 3
 var misses = 0
 var muted = 1
-var gameStarted = 0
 var pauseAlpha = 0
-var circleAlpha
+var mouseXPosition
+var mouseYPosition
 
 var circleArray = []
 
@@ -45,10 +47,12 @@ var healthLeftImage = new Image()
 var playPauseButtons = new Image()
 var pausedBorder = new Image()
 var cursorImage = new Image()
+var circleImage = new Image()
 
 // image sources that will not be changed
-pausedBorder.src = "Paused_Border.png" // set the audio icon to
-cursorImage.src = "cursor.png" // set the audio icon to
+pausedBorder.src = "Paused_Border.png" // set the paused border image
+cursorImage.src = "cursor.png" // set the cursor image
+circleImage.src = "circle.png" // set the circle image
 
 window.onload=startCanvas
 function startCanvas(){
@@ -56,9 +60,8 @@ function startCanvas(){
 	// Everthing that loads on startup is here
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	
-	// Call the loadSideBar funtion to load the icons (for some reason function is broken when called here)
-	clearLoad = setInterval(loadSideBar, 16)
-
+	// Call the loadSideBar funtion to load the icons repeatedly (for some reason function is broken when called here)
+	clearLoad = setInterval(menu, 16)
 }
 
 window.addEventListener('keydown', keyDownFunction) // when a key is pressed call the keyDownFuntion
@@ -70,9 +73,8 @@ function keyDownFunction(keyboardEvent){
 		// This timer sets the framerate.
 		// 10 means 10 milliseconds between frames (100 frames per second)
 		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
-			clearInterval(clearLoad);
-			timer = setInterval(updateCanvas, 16)
-			timer = setInterval(circleSpawn, 1000)
+			clearInterval(clearLoad);			
+			timer = setInterval(updateMainGame, 16)
 			gameStarted = 1
 		}
 	} else if (keyDown == "Escape") {
@@ -81,29 +83,71 @@ function keyDownFunction(keyboardEvent){
 		alphaPause = 0
 	}
 }
+function menu(){
+	// Clear the frame
+	ctx.fillStyle="#ffffff50"
+	ctx.fillRect(0,0,WIDTH,HEIGHT)	
+	
+	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
 
-function updateCanvas(){
-	// The updateCanvas() function contains the main game loop
+	loadSideBar()
+}
+
+function updateMainGame(){
+	// The updateMainGame() function contains the main game loop
 	// It is run once every frame. Most of the game code will go here
 
 	// Clear the frame
 	ctx.fillStyle="#ffffff50"
-	ctx.fillRect(0,0,WIDTH,HEIGHT)
+	ctx.fillRect(0,0,WIDTH,HEIGHT)	
+
+	
+	ctx.fillText(score, 10, 10)
+	score = score+1
+
+	var circleNumber = 0 // Start at drop 0
+	while (circleNumber < circleArray.length){ // Keep going until you get to the last circle
+		ctx.drawImage(circleImage, circleArray[circleNumber].circleXPosition-25, circleArray[circleNumber].circleYPosition-25) // draw the image of the circle
+		circleNumber++
+	}
 
 	// Set the colour for the lines to black
 	ctx.fillStyle="black"
 	// Draw the two main lines
-	ctx.fillRect(0,linesPosition,GAME_HEIGHT,LINE_SIZE)
-	ctx.fillRect(linesPosition, 0, LINE_SIZE, GAME_WIDTH)
+	ctx.fillRect(0,linesPositions,GAME_HEIGHT,LINE_SIZE)
+	ctx.fillRect(linesPositions, 0, LINE_SIZE, GAME_WIDTH)
 	
 	if (gameActive == 1) { // Checks if game should be paused or not
+		// checks if the lines are ouside their set border\
+		if(linesPositions > GAME_HEIGHT-7){
+			linesPositions = GAME_HEIGHT-5
+		} else if( linesPositions < -7) {
+			linesPositions < -5
+		}
 		// changes the line location
-		linesPosition = linesPosition + linesSpeed
+		linesPositions = linesPositions + linesSpeed
 		
 		// changes the line speed when the lines hit edge of the canvas
-		if (linesPosition > GAME_HEIGHT-5 || linesPosition < -5) {
+		if (linesPositions > GAME_HEIGHT-5 || linesPositions < -5) {
 			linesSpeed = linesSpeed*-1
+			// some circles will be connected to the lineMovement variable when set to up and others when it's set to down
+			if (lineMovement == "down") {
+				lineMovement = "up"
+			} else {
+				lineMovement = "down"
+			}
 		}
+		
+		if(framesToCircleSpawn > 0){
+			framesToCircleSpawn = framesToCircleSpawn-1
+		} else {
+			// reset the framesToCircleSpawn variable
+			framesToCircleSpawn=62
+			// spawn a circle
+			circleArray.push(new Circle())
+		}
+
+
 	} else {
 		//Change and set the alpha, this will create a fade in effect
 		if (alphaPause < 1) {
@@ -126,31 +170,40 @@ function updateCanvas(){
 		ctx.globalAlpha = 1
 	}
 
-	ctx.fillText(score, 10, 10)
-	score = score+1
-
 	// Call the loadSideBar funtion to load the icons
 	loadSideBar()
+
+	circleNumber = 0 // Start at drop 0
+	while (circleNumber < circleArray.length){ // Keep going until you get to the last drop
+		if (circlePassed(circleArray[circleNumber].circleXPosition, circleArray[circleNumber].circleYPosition)){ // Check the drop's xPosition and yPosition
+			circleArray.shift();
+		}
+		circleNumber ++ // Do the next drop
+	}
 
 	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
 }
 
-function circleSpawn() {
-	circleArray.push(new Circle())
-}
-
+// what to do everytime a circle is spawned
 class Circle{
 	constructor(x){
 		// set the x and y possitions to 10
-		this.circleXPosition = linesPosition + 90
-		this.circleYPosition = linesPosition + 90
+		this.circleXPosition = linesPositions + 95
+		this.circleYPosition = linesPositions + 95
 		// Detect if a number is even or odd then set either the circleXPosition (if it's an even number) 
 		// or circleYPosition (if it's an odd number) to a random possition (min and max dependant on line possition)
 		// I am aware this is likely not the best or easiest randomisation option but it is the first that came to my head.
 		var lineRandomiser = Math.floor(Math.random()*10)
+
 		if(lineRandomiser % 2 == 0) {
 			console.log("even")
 			this.circleXPosition = Math.floor(Math.random()*CIRCLE_SPAWN_AREA)+30
+
+			if (lineMovement == "up") {
+				console.log("up")
+				this.circleXPosition - 60
+				this.circleYPosition - 90
+			}
 
 			ctx.beginPath();
 			ctx.arc(this.circleXPosition, this.circleYPosition, 30, 0, 2 * Math.PI);
@@ -159,13 +212,38 @@ class Circle{
 		} else {
 			console.log("odd")
 			this.circleYPosition = Math.floor(Math.random()*CIRCLE_SPAWN_AREA)+30
+			
+			if (lineMovement == "up") {
+				console.log("up")
+				this.circleXPosition - 90
+				this.circleYPosition - 60
+			}
 
 			ctx.beginPath();
 			ctx.arc(this.circleXPosition, this.circleYPosition, 30, 0, 2 * Math.PI);
 			ctx.lineWidth = 3;
 			ctx.stroke();
 		}
+		
 	}
+}
+
+function circlePassed(circleXPosition, circleYPosition) {
+	if(linesPositions > circleXPosition+30 || linesPositions > circleYPosition+30){
+		// The raindrop has hit the umbrella, return true
+		return(true)
+	}else{
+		// The raindrop has not hit the umbrella, return false
+		return(false)
+	}
+}
+
+// everytime the mouse moves
+window.addEventListener('mousemove', mouseMovedFunction)
+// draw the cursor to a different position
+function mouseMovedFunction(mouseEvent){
+	mouseXPosition = mouseEvent.offsetX; // the offsetX property is the x position on the canvas
+    mouseYPosition = mouseEvent.offsetY; // the offsetY property is the y position on the canvas
 }
 
 function loadSideBar() {
