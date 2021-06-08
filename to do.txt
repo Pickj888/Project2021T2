@@ -6,10 +6,11 @@ The following will be a list of bugs that have happened or are happening that I 
 2. Icons won't load until the game starts (Found:11/05/21 - First attempted fix:12/05/21 - Fixed:12/05/21)
 3. Whole game flickers (connected to bug no.2) - (Found:12/05/20 - Bug fixed on first attempt on same day)
 4. Setting misses outside of the health range will cause errors and break the game (Found:14/05/21 - First attempted fix:20/05/21 - Fixed:20/05/21 )
-5. Circles only flash when they are generated (Found:29/05/20 - First attempted fix:29/05/21 - Fixed: 30/05/21)
-6. Cursor creates non fading trail before game starts (Found:29/05/21 - First attempted fix:29/05/21 - Fixed: 30/05/21)
-7. Circles on lines going up are not correctly placed (Found:29/05/21 - First attempted fix:30/05/21 )
-8. Circles won't disapear after line passes them (Found:29/05/21)
+5. Circles only flash when they are generated (Found:30/05/20 - First attempted fix:30/05/21 - Fixed: 30/05/21)
+6. Cursor creates non fading trail before game starts (Found:30/05/21 - First attempted fix:30/05/21 - Fixed: 30/05/21)
+7. Circles on lines going up are not correctly placed (Found:30/05/21 - First attempted fix:30/05/21 )
+8. Circles won't disapear after line passes them (Found:30/05/21 - Fixed:31/05/21)
+9. Circle disapearing does not work as intended (Found:31/05/21)
 
 The following will be a list of bugs that are happening that I do not plan on fixing
 1. Fading is counted on the pause menu closing (Set as feature, fading is now set to work on pause menu opening, fading now works in creating a mouse trail)

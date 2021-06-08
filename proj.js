@@ -229,7 +229,10 @@ class Circle{
 }
 
 function circlePassed(circleXPosition, circleYPosition) {
-	if(linesPositions > circleXPosition+30 || linesPositions > circleYPosition+30){
+	if(linesPositions+5 > circleXPosition+30 && 
+		lineMovement !== "up" || 
+		linesPositions+5 < circleYPosition-30 &&
+		lineMovement == "up"){
 		// The raindrop has hit the umbrella, return true
 		return(true)
 	}else{
