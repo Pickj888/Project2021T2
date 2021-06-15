@@ -101,9 +101,9 @@ function updateMainGame(){
 	ctx.fillStyle="#ffffff50"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)	
 
-	
-	ctx.fillText(score, 10, 10)
-	score = score+1
+	ctx.fillStyle="#000000"
+	ctx.fillText(Math.floor(score), 10, 10)
+	score = score+0.016
 
 	var circleNumber = 0 // Start at drop 0
 	while (circleNumber < circleArray.length){ // Keep going until you get to the last circle
@@ -178,7 +178,7 @@ function updateMainGame(){
 		if (circlePassed(circleArray[circleNumber].circleXPosition, circleArray[circleNumber].circleYPosition)){ // Check the drop's xPosition and yPosition
 			circleArray.shift();
 		}
-		circleNumber ++ // Do the next drop
+		circleNumber ++ // Do the next CIRCLE
 	}
 
 	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
@@ -196,29 +196,43 @@ class Circle{
 		var lineRandomiser = Math.floor(Math.random()*10)
 
 		if(lineRandomiser % 2 == 0) {
-			console.log("even")
-			this.circleXPosition = Math.floor(Math.random()*CIRCLE_SPAWN_AREA)+30
-
+			console.log("even") // close to horizontal line, random distance from vertical line
 			if (lineMovement == "up") {
-				console.log("up")
-				this.circleXPosition - 60
-				this.circleYPosition - 90
+				this.circleXPosition = Math.floor(Math.random()*(linesPositions-75))
+				this.circleYPosition = linesPositions - 75
+			}	else {
+				this.circleXPosition = Math.floor(Math.random()*(GAME_WIDTH-linesPositions))+75
+				this.circleYPosition = linesPositions + 75
 			}
 
+			// if (lineMovement == "up") {
+			// 	console.log("up")
+			// 	this.circleXPosition - 60
+			// 	this.circleYPosition - 190
+			// }
+
+			// Draw a circle (this will be drawn over in the update canvas funtion so it will create a popping effect rather than staying)
 			ctx.beginPath();
 			ctx.arc(this.circleXPosition, this.circleYPosition, 30, 0, 2 * Math.PI);
 			ctx.lineWidth = 3;
 			ctx.stroke();
 		} else {
 			console.log("odd")
-			this.circleYPosition = Math.floor(Math.random()*CIRCLE_SPAWN_AREA)+30
-			
 			if (lineMovement == "up") {
-				console.log("up")
-				this.circleXPosition - 90
-				this.circleYPosition - 60
+				this.circleYPosition = Math.floor(Math.random()*(linesPositions-75))
+				this.circleXPosition = linesPositions - 75
+			}	else {
+				this.circleYPosition = Math.floor(Math.random()*(GAME_HEIGHT-linesPositions))+75
+				this.circleXPosition = linesPositions + 75
 			}
+			
+			// if (lineMovement == "up") {
+			// 	console.log("up")
+			// 	this.circleXPosition - 190
+			// 	this.circleYPosition - 60
+			// }
 
+			// Draw a circle (this will be drawn over in the update canvas funtion so it will create a popping effect rather than staying)
 			ctx.beginPath();
 			ctx.arc(this.circleXPosition, this.circleYPosition, 30, 0, 2 * Math.PI);
 			ctx.lineWidth = 3;
