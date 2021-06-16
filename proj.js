@@ -16,11 +16,12 @@ const WIDTH = 645
 const HEIGHT = 600
 const LINE_SIZE = 10
 const CIRCLE_RADIUS = 0
+const FRAMERATE = 60
 
-
-// Some variables that will be used in this script
+// Most of the variables that will be used
 var ctx
 
+var canvasUpdateSpeed
 var score = 0
 var combo = 0
 var clicsTopScore = window.localStorage.getItem('clicsTopScore');
@@ -60,6 +61,10 @@ function startCanvas(){
 	// Everthing that loads on startup is here
 	ctx=document.getElementById("myCanvas").getContext("2d")
 	
+	// Change speeds and scores based on framerate
+	canvasUpdateSpeed = 1000/FRAMERATE
+	linesSpeed	
+
 	// Call the loadSideBar funtion to load the icons repeatedly (for some reason function is broken when called here)
 	clearLoad = setInterval(menu, 16)
 }
@@ -74,13 +79,12 @@ function keyDownFunction(keyboardEvent){
 		// 10 means 10 milliseconds between frames (100 frames per second)
 		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
 			clearInterval(clearLoad);			
-			timer = setInterval(updateMainGame, 16)
+			timer = setInterval(updateMainGame, canvasUpdateSpeed)
 			gameStarted = 1
 		}
-	} else if (keyDown == "Escape") {
-		console.log("Escape pressed")
-		gameActive = 0
-		alphaPause = 0
+	} else if (keyDown == "Escape") { // Checks if escape is pressed and the game is going.
+		gameActive = 0 // Set the game to it's paused state.
+		alphaPause = 0 // Set the pause menu to be fully opaque.
 	}
 }
 function menu(){
@@ -88,8 +92,10 @@ function menu(){
 	ctx.fillStyle="#ffffff50"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)	
 	
+	// Draw the cursor
 	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
 
+	// Call the function that loads (or updates) the sidebar
 	loadSideBar()
 }
 
@@ -101,10 +107,12 @@ function updateMainGame(){
 	ctx.fillStyle="#ffffff50"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)	
 
+	// (Temporary) load the scoring system
 	ctx.fillStyle="#000000"
 	ctx.fillText(Math.floor(score), 10, 10)
-	score = score+0.016
+	score = score+(canvasUpdateSpeed/1000)
 
+	// load all the current circles into the frame
 	var circleNumber = 0 // Start at drop 0
 	while (circleNumber < circleArray.length){ // Keep going until you get to the last circle
 		ctx.drawImage(circleImage, circleArray[circleNumber].circleXPosition-25, circleArray[circleNumber].circleYPosition-25) // draw the image of the circle
@@ -118,9 +126,9 @@ function updateMainGame(){
 	ctx.fillRect(linesPositions, 0, LINE_SIZE, GAME_WIDTH)
 	
 	if (gameActive == 1) { // Checks if game should be paused or not
-		// checks if the lines are ouside their set border\
+		// checks if the lines are ouside their set border
 		if(linesPositions > GAME_HEIGHT-7){
-			linesPositions = GAME_HEIGHT-5
+			linesPositions = GAME_HEIGHT-5 // 
 		} else if( linesPositions < -7) {
 			linesPositions < -5
 		}
@@ -138,15 +146,13 @@ function updateMainGame(){
 			}
 		}
 		
-		if(framesToCircleSpawn > 0){
-			framesToCircleSpawn = framesToCircleSpawn-1
-		} else {
-			// reset the framesToCircleSpawn variable
-			framesToCircleSpawn=62
-			// spawn a circle
-			circleArray.push(new Circle())
+		// Counts time to circles spawn every frame and then spawn circles.
+		if(framesToCircleSpawn > 0){ // checks if the frames left to the next circle being spawned is more than 0 .
+			framesToCircleSpawn = framesToCircleSpawn-1 // remove one frame until the next circle is spawned.
+		} else { // If the frames left to the next circle being spawned is not more than 0 
+			framesToCircleSpawn=FRAMERATE // reset the framesToCircleSpawn variable
+			circleArray.push(new Circle()) // spawn a circle
 		}
-
 
 	} else {
 		//Change and set the alpha, this will create a fade in effect
@@ -205,12 +211,6 @@ class Circle{
 				this.circleYPosition = linesPositions + 75
 			}
 
-			// if (lineMovement == "up") {
-			// 	console.log("up")
-			// 	this.circleXPosition - 60
-			// 	this.circleYPosition - 190
-			// }
-
 			// Draw a circle (this will be drawn over in the update canvas funtion so it will create a popping effect rather than staying)
 			ctx.beginPath();
 			ctx.arc(this.circleXPosition, this.circleYPosition, 30, 0, 2 * Math.PI);
@@ -225,12 +225,6 @@ class Circle{
 				this.circleYPosition = Math.floor(Math.random()*(GAME_HEIGHT-linesPositions))+75
 				this.circleXPosition = linesPositions + 75
 			}
-			
-			// if (lineMovement == "up") {
-			// 	console.log("up")
-			// 	this.circleXPosition - 190
-			// 	this.circleYPosition - 60
-			// }
 
 			// Draw a circle (this will be drawn over in the update canvas funtion so it will create a popping effect rather than staying)
 			ctx.beginPath();
@@ -244,7 +238,7 @@ class Circle{
 
 function circlePassed(circleXPosition, circleYPosition) {
 	if(linesPositions+5 > circleXPosition+30 && 
-		lineMovement !== "up" || 
+		lineMovement == "down" || 
 		linesPositions+5 < circleYPosition-30 &&
 		lineMovement == "up"){
 		// The raindrop has hit the umbrella, return true
