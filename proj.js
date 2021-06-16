@@ -207,7 +207,7 @@ class Circle{
 				this.circleXPosition = Math.floor(Math.random()*(linesPositions-75))
 				this.circleYPosition = linesPositions - 75
 			}	else {
-				this.circleXPosition = Math.floor(Math.random()*(GAME_WIDTH-linesPositions))+75
+				this.circleXPosition = GAME_WIDTH - Math.floor(Math.random()*(GAME_WIDTH-linesPositions))
 				this.circleYPosition = linesPositions + 75
 			}
 
@@ -222,7 +222,7 @@ class Circle{
 				this.circleYPosition = Math.floor(Math.random()*(linesPositions-75))
 				this.circleXPosition = linesPositions - 75
 			}	else {
-				this.circleYPosition = Math.floor(Math.random()*(GAME_HEIGHT-linesPositions))+75
+				this.circleYPosition = GAME_HEIGHT - Math.floor(Math.random()*(GAME_HEIGHT-linesPositions))
 				this.circleXPosition = linesPositions + 75
 			}
 
@@ -239,8 +239,13 @@ class Circle{
 function circlePassed(circleXPosition, circleYPosition) {
 	if(linesPositions+5 > circleXPosition+30 && 
 		lineMovement == "down" || 
+		linesPositions+5 > circleYPosition+30 &&
+		lineMovement == "down" ||
+		linesPositions+5 < circleXPosition-30 && 
+		lineMovement == "up" || 
 		linesPositions+5 < circleYPosition-30 &&
-		lineMovement == "up"){
+		lineMovement == "up"
+		){
 		// The raindrop has hit the umbrella, return true
 		return(true)
 	}else{
