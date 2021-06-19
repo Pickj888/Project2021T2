@@ -3,7 +3,7 @@
 * Author: Seb W
 * Date Started: 10/05/2021 (dd/mm/yyyy)
 * Version: pre-1
-* Last updated: 12/05/2020 (dd/mm/yyyy)
+* Last updated: 19/06/2020 (dd/mm/yyyy)
 **/
 
 console.log("Game JS Loaded")
@@ -20,7 +20,6 @@ const FRAMERATE = 60
 
 // Most of the variables that will be used
 var ctx
-
 var canvasUpdateSpeed
 var score = 0
 var combo = 0
@@ -29,6 +28,8 @@ var framesToCircleSpawn = 62
 var circleXPosition
 var circleYPosition
 var linesPositions = -4
+var lineXposition
+var lineYposition
 var linesSpeed = 2
 var lineMovement = "down"
 var gameActive = 0
@@ -85,8 +86,11 @@ function keyDownFunction(keyboardEvent){
 	} else if (keyDown == "Escape") { // Checks if escape is pressed and the game is going.
 		gameActive = 0 // Set the game to it's paused state.
 		alphaPause = 0 // Set the pause menu to be fully opaque.
+	} else if(keyDown == "a" || keyDown == "b" || keyDown == "c" || keyDown == "d" || keyDown == "e" || keyDown == "f" || keyDown == "g" || keyDown == "h" || keyDown == "i" || keyDown == "j" || keyDown == "k" || keyDown == "l" || keyDown == "m" || keyDown == "n" || keyDown == "o" || keyDown == "p" || keyDown == "q" || keyDown == "r" || keyDown == "s" || keyDown == "t" || keyDown == "u" || keyDown == "v" || keyDown == "w" || keyDown == "x" || keyDown == "y" || keyDown == "z"){
+		
 	}
 }
+
 function menu(){
 	// Clear the frame
 	ctx.fillStyle="#ffffff50"
@@ -121,9 +125,12 @@ function updateMainGame(){
 
 	// Set the colour for the lines to black
 	ctx.fillStyle="black"
+	// Set the line X and Y positions to match the linesPositions vari`able
+	lineXposition=linesPositions
+	lineYposition=linesPositions
 	// Draw the two main lines
-	ctx.fillRect(0,linesPositions,GAME_HEIGHT,LINE_SIZE)
-	ctx.fillRect(linesPositions, 0, LINE_SIZE, GAME_WIDTH)
+	ctx.fillRect(0,lineYposition,GAME_HEIGHT,LINE_SIZE)
+	ctx.fillRect(lineXposition, 0, LINE_SIZE, GAME_WIDTH)
 	
 	if (gameActive == 1) { // Checks if game should be paused or not
 		// checks if the lines are ouside their set border
