@@ -2,7 +2,7 @@
 * Title: 
 * Author: Seb W
 * Date Started: 10/05/2021 (dd/mm/yyyy)
-* Version: pre-1
+* Version: pre
 * Last updated: 19/06/2020 (dd/mm/yyyy)
 **/
 
@@ -11,11 +11,11 @@ console.log("Game JS Loaded")
 // Some constants that will be used in this script
 const GAME_WIDTH = 600
 const GAME_HEIGHT = 600
-const CIRCLE_SPAWN_AREA = 540
 const WIDTH = 645
 const HEIGHT = 600
 const LINE_SIZE = 10
-const CIRCLE_RADIUS = 0
+const CIRCLE_RADIUS = 30
+const CURSOR_RADIUS = 7
 const FRAMERATE = 60
 
 // Most of the variables that will be used
@@ -28,8 +28,8 @@ var framesToCircleSpawn = 62
 var circleXPosition
 var circleYPosition
 var linesPositions = -4
-var lineXposition
-var lineYposition
+var lineXPosition
+var lineYPosition
 var linesSpeed = 2
 var lineMovement = "down"
 var gameActive = 0
@@ -40,6 +40,7 @@ var muted = 1
 var pauseAlpha = 0
 var mouseXPosition
 var mouseYPosition
+var showDistances
 
 var circleArray = []
 
@@ -64,31 +65,9 @@ function startCanvas(){
 	
 	// Change speeds and scores based on framerate
 	canvasUpdateSpeed = 1000/FRAMERATE
-	linesSpeed	
 
 	// Call the loadSideBar funtion to load the icons repeatedly (for some reason function is broken when called here)
 	clearLoad = setInterval(menu, 16)
-}
-
-window.addEventListener('keydown', keyDownFunction) // when a key is pressed call the keyDownFuntion
-function keyDownFunction(keyboardEvent){
-	var keyDown = keyboardEvent.key // set what key has been pressed to the keyDown variable
-	console.log("A key was pressed, the key was", keyDown) // log the key that was pressed into console
-	if (gameActive == 0) { // if the game is not active then start/unpause the game
-		gameActive = 1
-		// This timer sets the framerate.
-		// 10 means 10 milliseconds between frames (100 frames per second)
-		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
-			clearInterval(clearLoad);			
-			timer = setInterval(updateMainGame, canvasUpdateSpeed)
-			gameStarted = 1
-		}
-	} else if (keyDown == "Escape") { // Checks if escape is pressed and the game is going.
-		gameActive = 0 // Set the game to it's paused state.
-		alphaPause = 0 // Set the pause menu to be fully opaque.
-	} else if(keyDown == "a" || keyDown == "b" || keyDown == "c" || keyDown == "d" || keyDown == "e" || keyDown == "f" || keyDown == "g" || keyDown == "h" || keyDown == "i" || keyDown == "j" || keyDown == "k" || keyDown == "l" || keyDown == "m" || keyDown == "n" || keyDown == "o" || keyDown == "p" || keyDown == "q" || keyDown == "r" || keyDown == "s" || keyDown == "t" || keyDown == "u" || keyDown == "v" || keyDown == "w" || keyDown == "x" || keyDown == "y" || keyDown == "z"){
-		
-	}
 }
 
 function menu(){
@@ -126,18 +105,18 @@ function updateMainGame(){
 	// Set the colour for the lines to black
 	ctx.fillStyle="black"
 	// Set the line X and Y positions to match the linesPositions vari`able
-	lineXposition=linesPositions
-	lineYposition=linesPositions
+	lineXPosition=linesPositions
+	lineYPosition=linesPositions
 	// Draw the two main lines
-	ctx.fillRect(0,lineYposition,GAME_HEIGHT,LINE_SIZE)
-	ctx.fillRect(lineXposition, 0, LINE_SIZE, GAME_WIDTH)
+	ctx.fillRect(0,lineYPosition,GAME_HEIGHT,LINE_SIZE)
+	ctx.fillRect(lineXPosition, 0, LINE_SIZE, GAME_WIDTH)
 	
 	if (gameActive == 1) { // Checks if game should be paused or not
 		// checks if the lines are ouside their set border
 		if(linesPositions > GAME_HEIGHT-7){
 			linesPositions = GAME_HEIGHT-5 // 
 		} else if( linesPositions < -7) {
-			linesPositions < -5
+			linesPositions = -5
 		}
 		// changes the line location
 		linesPositions = linesPositions + linesSpeed
@@ -191,10 +170,26 @@ function updateMainGame(){
 		if (circlePassed(circleArray[circleNumber].circleXPosition, circleArray[circleNumber].circleYPosition)){ // Check the drop's xPosition and yPosition
 			circleArray.shift();
 		}
-		circleNumber ++ // Do the next CIRCLE
+		circleNumber ++ // Do the next circle
 	}
 
-	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
+	ctx.drawImage(cursorImage, mouseXPosition-((cursorImage.width+1)/2), mouseYPosition-((cursorImage.height+1)/2)) // draw the cursor image where the mouse clicks
+
+	if(showDistances=="true") {
+		var circleNumber = 0 // Start at drop 0
+		while (circleNumber < circleArray.length){ // Keep going until you get to the last circle
+			// set the distances from the centers
+			var mouseXDistance = mouseXPosition - circleArray[circleNumber].circleXPosition
+			var mouseYDistance = mouseYPosition - circleArray[circleNumber].circleYPosition
+			// set the distance from the edges (I said full distance)
+			var mouseFullDistance = Math.sqrt(mouseXDistance*mouseXDistance + mouseYDistance*mouseYDistance)
+			// fill text showing the distances
+			ctx.fillText("Mouse X distance (from centers): " + mouseXDistance,30,110)		
+			ctx.fillText("Mouse Y distance (from centers): " + mouseYDistance,30,130)		
+			ctx.fillText("Mouse Full distance (From edges): " + Math.ceil(mouseFullDistance - CIRCLE_RADIUS - CURSOR_RADIUS),30,150)
+			circleNumber++	// move on to the next circle
+		}
+	}
 }
 
 // what to do everytime a circle is spawned
@@ -258,6 +253,33 @@ function circlePassed(circleXPosition, circleYPosition) {
 	}else{
 		// The raindrop has not hit the umbrella, return false
 		return(false)
+	}
+}
+
+window.addEventListener('keydown', keyDownFunction) // when a key is pressed call the keyDownFuntion
+function keyDownFunction(keyboardEvent){
+	var keyDown = keyboardEvent.key // set what key has been pressed to the keyDown variable
+	console.log("A key was pressed, the key was", keyDown) // log the key that was pressed into console
+	if (gameActive == 0) { // if the game is not active then start/unpause the game
+		gameActive = 1
+		// This timer sets the framerate.
+		// 10 means 10 milliseconds between frames (100 frames per second)
+		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
+			clearInterval(clearLoad);			
+			timer = setInterval(updateMainGame, canvasUpdateSpeed)
+			gameStarted = 1
+		}
+	} else if (keyDown == "Escape") { // Checks if escape is pressed and the game is going.
+		gameActive = 0 // Set the game to it's paused state.
+		alphaPause = 0 // Set the pause menu to be fully opaque.
+	} else if(keyDown == "9") {
+		if(showDistances == "false") {
+			showDistances = "true"
+		} else {
+			showDistances = "false"
+		}
+	}else if(/^[a-zA-Z]/.test(keyDown)){
+		
 	}
 }
 

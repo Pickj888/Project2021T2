@@ -1,5 +1,9 @@
-This is a list of features I am planning to add or bugs I know about
-1. Add a custom cursor for the game
+This is a list of features I am planning to add
+1. Enable click detection.
+2. Add keybind viewer for all of the icons.
+3. Add main menu.
+4. Add fail menu.
+5. Add menu for when you successfully finish the game.
 
 The following will be a list of bugs that have happened or are happening that I know about
 1. Pausing game speeds it up (Found:11/05/20 - Fixed:12/05/20 - Bug fixed on first attempt)
@@ -10,7 +14,8 @@ The following will be a list of bugs that have happened or are happening that I 
 6. Cursor creates non fading trail before game starts (Found:30/05/21 - First attempted fix:30/05/21 - Fixed: 30/05/21)
 7. Circles on lines going up are not correctly placed (Found:30/05/21 - First attempted fix:30/05/21 )
 8. Circles won't disapear after line passes them (Found:30/05/21 - Fixed:31/05/21)
-9. Circle disapearing does not work as intended (Found:31/05/21)
+9. Circle disapearing does not work as intended (Found:31/05/21 - First attempted fix:31/05/21 - Fixed: 11/06/21)
+10. Cursor is not in the correct position (found 19/06/21 - Fixed 19/06/21)
 
 The following will be a list of bugs that are happening that I do not plan on fixing
 1. Fading is counted on the pause menu closing (Set as feature, fading is now set to work on pause menu opening, fading now works in creating a mouse trail)
