@@ -41,6 +41,8 @@ var pauseAlpha = 0
 var mouseXPosition
 var mouseYPosition
 var showDistances
+var died = false
+var mainMenuText = "WELCOME"
 
 var circleArray = []
 
@@ -67,13 +69,25 @@ function startCanvas(){
 	canvasUpdateSpeed = 1000/FRAMERATE
 
 	// Call the loadSideBar funtion to load the icons repeatedly (for some reason function is broken when called here)
-	clearLoad = setInterval(menu, 16)
+	menuLoad = setInterval(mainMenu, 16)
 }
 
-function menu(){
+function mainMenu(){
 	// Clear the frame
-	ctx.fillStyle="#ffffff50"
+	ctx.fillStyle="#ff0000"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)	
+
+	// create a box to hold all of the paused text
+	ctx.fillStyle="#ffffffe0"
+	ctx.fillRect(35, 35, GAME_HEIGHT-70, GAME_WIDTH-70)
+	ctx.drawImage(pausedBorder, 25, 25) // Draw the audio icon that has been set
+	// Write all of the text over the paused box
+	ctx.fillStyle="#000000a0"
+	ctx.font="50px Arial"
+	ctx.fillText(mainMenuText, 125, 85)
+	
+	ctx.fillStyle="#0000ff"
+	ctx.font="9px Arial"
 	
 	// Draw the cursor
 	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
@@ -93,7 +107,6 @@ function updateMainGame(){
 	// (Temporary) load the scoring system
 	ctx.fillStyle="#000000"
 	ctx.fillText(Math.floor(score), 10, 10)
-	score = score+(canvasUpdateSpeed/1000)
 
 	// load all the current circles into the frame
 	var circleNumber = 0 // Start at drop 0
@@ -168,7 +181,9 @@ function updateMainGame(){
 	circleNumber = 0 // Start at drop 0
 	while (circleNumber < circleArray.length){ // Keep going until you get to the last drop
 		if (circlePassed(circleArray[circleNumber].circleXPosition, circleArray[circleNumber].circleYPosition)){ // Check the drop's xPosition and yPosition
-			circleArray.shift();
+			circleArray.shift(); // remove the last circle
+			combo = 0 // reset the combo
+			misses++ // add to the misses
 		}
 		circleNumber ++ // Do the next circle
 	}
@@ -189,6 +204,12 @@ function updateMainGame(){
 			ctx.fillText("Mouse Full distance (From edges): " + Math.ceil(mouseFullDistance - CIRCLE_RADIUS - CURSOR_RADIUS),30,150)
 			circleNumber++	// move on to the next circle
 		}
+	}
+
+	if(healthLeft == 0) {
+		mainMenuText = "YOU LOST"
+		clearInterval(timer);			
+		menuLoad = setInterval(mainMenu, 16)
 	}
 }
 
@@ -234,7 +255,6 @@ class Circle{
 			ctx.lineWidth = 3;
 			ctx.stroke();
 		}
-		
 	}
 }
 
@@ -265,11 +285,11 @@ function keyDownFunction(keyboardEvent){
 		// This timer sets the framerate.
 		// 10 means 10 milliseconds between frames (100 frames per second)
 		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
-			clearInterval(clearLoad);			
+			clearInterval(menuLoad);			
 			timer = setInterval(updateMainGame, canvasUpdateSpeed)
 			gameStarted = 1
 		}
-	} else if (keyDown == "Escape") { // Checks if escape is pressed and the game is going.
+	} else if (keyDown == "Escape" || keyDown == "1") { // Checks if escape is pressed and the game is going.
 		gameActive = 0 // Set the game to it's paused state.
 		alphaPause = 0 // Set the pause menu to be fully opaque.
 	} else if(keyDown == "9") {
@@ -279,7 +299,22 @@ function keyDownFunction(keyboardEvent){
 			showDistances = "false"
 		}
 	}else if(/^[a-zA-Z]/.test(keyDown)){
-		
+		var circleNumber = 0 // Start at drop 0
+		while (circleNumber < circleArray.length){ // Keep going until you get to the last circle
+			// set the distances from the centers
+			var mouseXDistance = mouseXPosition - circleArray[circleNumber].circleXPosition
+			var mouseYDistance = mouseYPosition - circleArray[circleNumber].circleYPosition
+			// set the distance from the edges (I said full distance)
+			var mouseFullDistance = Math.sqrt(mouseXDistance*mouseXDistance + mouseYDistance*mouseYDistance)
+			if(Math.ceil(mouseFullDistance - CIRCLE_RADIUS - CURSOR_RADIUS)<1){
+				console.log("HIT!")
+				combo++
+				score = score + 100 + combo
+				circleArray.splice(circleNumber, 1); 
+
+			}
+			circleNumber++	// move on to the next circle
+		}
 	}
 }
 
@@ -300,6 +335,10 @@ function loadSideBar() {
 	ctx.fillStyle="#c00000"
 	ctx.fillRect(GAME_WIDTH, 0, 6, GAME_HEIGHT)
 
+	// Set the size, font and colour for future text written
+	ctx.font="10px Arial"
+	ctx.fillStyle="green"
+
 	// checks if audio should be muted or not
 	if (muted == 1) {
 		audioImage.src = "AudioImages/Audio_Muted.png" // set the audio icon to
@@ -308,7 +347,7 @@ function loadSideBar() {
 	}
 	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
 
-	playPauseButtons.src = "PlayButtonImages/" + gameActive + ".png"
+	playPauseButtons.src = "PlayButtonImages/" + gameActive + ".png" // Set the play button image
 	ctx.drawImage(playPauseButtons, WIDTH-33, 38) // Draw the audio icon that has been set
 
 	healthLeft = 3 - misses
@@ -319,8 +358,6 @@ function loadSideBar() {
 	}
 	ctx.drawImage(healthLeftImage, WIDTH-34, HEIGHT-35) // Draw the audio icon that has been set
 	// Text for all your health info
-	ctx.font="10px Arial"
-	ctx.fillStyle="green"
 	ctx.fillText(misses+"/3", WIDTH-26, HEIGHT-70)
 	ctx.fillText("misses", WIDTH-35, HEIGHT-60)
 	ctx.fillText("-----------", WIDTH-38, HEIGHT-50)
