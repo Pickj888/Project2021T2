@@ -3,7 +3,7 @@
 * Author: Seb W
 * Date Started: 10/05/2021 (dd/mm/yyyy)
 * Version: pre
-* Last updated: 19/06/2020 (dd/mm/yyyy)
+* Last updated: 20/06/2020 (dd/mm/yyyy)
 **/
 
 console.log("Game JS Loaded")
@@ -77,7 +77,7 @@ function mainMenu(){
 	ctx.fillStyle="#ff0000"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)	
 
-	// create a box to hold all of the paused text
+	// create a box to hold all of the menu text
 	ctx.fillStyle="#ffffffe0"
 	ctx.fillRect(35, 35, GAME_HEIGHT-70, GAME_WIDTH-70)
 	ctx.drawImage(pausedBorder, 25, 25) // Draw the audio icon that has been set
@@ -94,17 +94,32 @@ function mainMenu(){
 	} else {
 		ctx.fillText("here are your goals", 40, 130)
 	}
-	ctx.fillText("Your goal is to get as high of a score as possible.", 40, 145)
-	ctx.fillText("While it is possible to complete the game you are not supposed to.", 40, 160)
-	ctx.fillText("To play circles will be generated.", 40, 175)
-	ctx.fillText("You have to respond to the circles and click on them as fast as possible.", 40, 190)
-	ctx.fillText("While it is possible to complete the game you are not supposed to.", 40, 205)
+	// explain how the game works
+	ctx.fillText("Your goal is to get as high of a score as possible.", 40, 155)
+	ctx.fillText("While it is possible to complete the game you are not supposed to.", 40, 175)
+	ctx.fillText("To play circles will be generated.", 40, 195)
+	ctx.fillText("You have to respond to the circles and click on them as fast", 40, 215)
+	ctx.fillText("as you possibly can before it's too late.", 40, 235)	
+	ctx.fillText("You can click on the circles anytime before the line has passed them.", 40, 255)
+	ctx.fillText("Clicking is slightly different in this game.", 40, 275)
+	ctx.fillText("Instead of clicking you have to tap on any letter from a to z.", 40, 295)
+	ctx.fillText("Some of you may find this more difficult and", 40, 315)
+	ctx.fillText("some of you find it less difficult.", 40, 335)
+	ctx.fillText("The game is deliberatly made to be defficult to play.", 40, 355)
+	ctx.fillText("Lives can disappear qickly and the game can end quickly.", 40, 375)
+	ctx.fillText("I wish you luck on getting the highest score you can!", 40, 395)
+	ctx.fillStyle="#ff0000" // make warning tex red
+	// Write warning text.
+	ctx.fillText("WARNING: SOME CIRCLES DON'T GENERATE IN THE RIGHT", 40, 415)
+	ctx.fillText("AREA AND FORCE YOU TO LOSE HEALTH, THIS IS NOT", 40, 435)
+	ctx.fillText("INTENTIONAL BUT I DIDN'T HAVE ENOUGH TIME TO FIX IT", 40, 455)
 	
-	// Draw the cursor
-	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
+	ctx.fillStyle="#0000ff" // Reset text colour
+	ctx.font="30px Arial" // Set text size
+	ctx.fillText("Press any key to start!", 140, 550)
+	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition) // Draw the cursor
 
-	// Call the function that loads (or updates) the sidebar
-	loadSideBar()
+	loadSideBar() // Call the function that loads (or updates) the sidebar
 }
 
 function updateMainGame(){
@@ -114,10 +129,6 @@ function updateMainGame(){
 	// Clear the frame
 	ctx.fillStyle="#ffffff50"
 	ctx.fillRect(0,0,WIDTH,HEIGHT)	
-
-	// (Temporary) load the scoring system
-	ctx.fillStyle="#000000"
-	ctx.fillText(Math.floor(score), 10, 10)
 
 	// load all the current circles into the frame
 	var circleNumber = 0 // Start at drop 0
@@ -136,14 +147,13 @@ function updateMainGame(){
 	ctx.fillRect(lineXPosition, 0, LINE_SIZE, GAME_WIDTH)
 	
 	if (gameActive == 1) { // Checks if game should be paused or not
-		// checks if the lines are ouside their set border
+		// checks if the lines are ouside their set border and fixes the possition of the lines
 		if(linesPositions > GAME_HEIGHT-7){
-			linesPositions = GAME_HEIGHT-5 // 
+			linesPositions = GAME_HEIGHT-5
 		} else if( linesPositions < -7) {
 			linesPositions = -5
 		}
-		// changes the line location
-		linesPositions = linesPositions + linesSpeed
+		linesPositions = linesPositions + linesSpeed // changes the line location
 		
 		// changes the line speed when the lines hit edge of the canvas
 		if (linesPositions > GAME_HEIGHT-5 || linesPositions < -5) {
@@ -204,11 +214,10 @@ function updateMainGame(){
 	if(showDistances=="true") {
 		var circleNumber = 0 // Start at drop 0
 		while (circleNumber < circleArray.length){ // Keep going until you get to the last circle
-			// set the distances from the centers
+			// culculate the the distances from the centers of the cursor and circles
 			var mouseXDistance = mouseXPosition - circleArray[circleNumber].circleXPosition
 			var mouseYDistance = mouseYPosition - circleArray[circleNumber].circleYPosition
-			// set the distance from the edges (I said full distance)
-			var mouseFullDistance = Math.sqrt(mouseXDistance*mouseXDistance + mouseYDistance*mouseYDistance)
+			var mouseFullDistance = Math.sqrt(mouseXDistance*mouseXDistance + mouseYDistance*mouseYDistance) // set the distance from the edges
 			// fill text showing the distances
 			ctx.fillText("Mouse X distance (from centers): " + mouseXDistance,30,110)		
 			ctx.fillText("Mouse Y distance (from centers): " + mouseYDistance,30,130)		
@@ -308,6 +317,7 @@ function keyDownFunction(keyboardEvent){
 		score = 0
 		misses = 0
 		linesPositions = -4
+		framesToCircleSpawn = 60
 		// This timer sets the framerate.
 		// 10 means 10 milliseconds between frames (100 frames per second)
 		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
@@ -332,20 +342,17 @@ function keyDownFunction(keyboardEvent){
 			var mouseYDistance = mouseYPosition - circleArray[circleNumber].circleYPosition
 			// set the distance from the edges (I said full distance)
 			var mouseFullDistance = Math.sqrt(mouseXDistance*mouseXDistance + mouseYDistance*mouseYDistance)
-			if(Math.ceil(mouseFullDistance - CIRCLE_RADIUS - CURSOR_RADIUS)<1){
-				console.log("HIT!")
-				combo++
-				score = score + 100 + combo
-				circleArray.splice(circleNumber, 1); 
-
+			if(Math.ceil(mouseFullDistance - CIRCLE_RADIUS - CURSOR_RADIUS)<1){ // if the cursor is indie a circle
+				combo++ // add to the combo
+				score = score + 10 + combo // add to the score
+				circleArray.splice(circleNumber, 1); // remove the circle
 			}
 			circleNumber++	// move on to the next circle
 		}
 	}
 }
 
-// everytime the mouse moves
-window.addEventListener('mousemove', mouseMovedFunction)
+window.addEventListener('mousemove', mouseMovedFunction)// everytime the mouse moves
 // draw the cursor to a different position
 function mouseMovedFunction(mouseEvent){
 	mouseXPosition = mouseEvent.offsetX; // the offsetX property is the x position on the canvas
@@ -367,23 +374,24 @@ function loadSideBar() {
 
 	// checks if audio should be muted or not
 	if (muted == 1) {
-		audioImage.src = "AudioImages/Audio_Muted.png" // set the audio icon to
+		audioImage.src = "AudioImages/Audio_Muted.png" // set the audio icon to what is is when it's muted
 	} else {
-		audioImage.src = "AudioImages/Audio.png"
+		audioImage.src = "AudioImages/Audio.png" // set the audio icon to what is is when it's not muted this should not appear
 	}
 	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
+	// text under audio
 	ctx.fillText("Audio", WIDTH-34, 42)
 	ctx.fillText("not", WIDTH-28, 52)
 	ctx.fillText("usable", WIDTH-34, 62)
 
 	playPauseButtons.src = "PlayButtonImages/" + gameActive + ".png" // Set the play button image
 	ctx.drawImage(playPauseButtons, WIDTH-34, 68) // Draw the audio icon that has been set
-	ctx.fillText("Press 1", WIDTH-36, 107)
+	ctx.fillText("Press 1", WIDTH-36, 107) // shows what keybind works to pause the game
 
 	ctx.font="40px Arial" // Set the font size for the score
-	var scoreDigit = 0
+	var scoreDigit = 0 // Set the scoreDigit variable
 	for (var scoreDigit = 0, len = score.toString().length; scoreDigit < len; scoreDigit++) {
-		ctx.fillText((score.toString()[scoreDigit]), WIDTH-30, 150+(45*scoreDigit));
+		ctx.fillText((score.toString()[scoreDigit]), WIDTH-30, 150+(45*scoreDigit)); // draw the score on the sidebar
 	}	  
 
 	healthLeft = 3 - misses // set how much health is left

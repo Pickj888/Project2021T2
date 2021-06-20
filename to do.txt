@@ -1,9 +1,5 @@
 This is a list of features I am planning to add
-1. Enable click detection.
-2. Add keybind viewer for all of the icons.
-3. Add main menu.
-4. Add fail menu.
-5. Add menu for when you successfully finish the game.
+0. Everything that is required has been finished in here!
 
 The following will be a list of bugs that have happened or are happening that I know about
 1. Pausing game speeds it up (Found:11/05/20 - Fixed:12/05/20 - Bug fixed on first attempt)
