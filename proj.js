@@ -210,6 +210,14 @@ function updateMainGame(){
 		mainMenuText = "YOU LOST"
 		clearInterval(timer);			
 		menuLoad = setInterval(mainMenu, 16)
+		gameActive = 0
+		gameStarted = 0
+	} else if(score > 1000) {
+		mainMenuText = "YOU WIN"
+		clearInterval(timer);			
+		menuLoad = setInterval(mainMenu, 16)
+		gameActive = 0
+		gameStarted = 0
 	}
 }
 
@@ -282,6 +290,9 @@ function keyDownFunction(keyboardEvent){
 	console.log("A key was pressed, the key was", keyDown) // log the key that was pressed into console
 	if (gameActive == 0) { // if the game is not active then start/unpause the game
 		gameActive = 1
+		score = 0
+		misses = 0
+		linesPositions = -4
 		// This timer sets the framerate.
 		// 10 means 10 milliseconds between frames (100 frames per second)
 		if (gameStarted == 0) { // this if function is used as not to allow a bug to pass through
@@ -346,18 +357,29 @@ function loadSideBar() {
 		audioImage.src = "AudioImages/Audio.png"
 	}
 	ctx.drawImage(audioImage, WIDTH-33, 5) // Draw the audio icon that has been set
+	ctx.fillText("Audio", WIDTH-34, 42)
+	ctx.fillText("not", WIDTH-28, 52)
+	ctx.fillText("usable", WIDTH-34, 62)
 
 	playPauseButtons.src = "PlayButtonImages/" + gameActive + ".png" // Set the play button image
-	ctx.drawImage(playPauseButtons, WIDTH-33, 38) // Draw the audio icon that has been set
+	ctx.drawImage(playPauseButtons, WIDTH-34, 68) // Draw the audio icon that has been set
+	ctx.fillText("Press 1", WIDTH-36, 107)
 
-	healthLeft = 3 - misses
-	if (misses == 1 || misses == 2 || misses == 3 || misses == 0) {
-		healthLeftImage.src = "HealthImages/" + healthLeft + "HealthLeft.png"
-	} else {
-		misses = 3
+	ctx.font="40px Arial" // Set the font size for the score
+	var scoreDigit = 0
+	for (var scoreDigit = 0, len = score.toString().length; scoreDigit < len; scoreDigit++) {
+		ctx.fillText((score.toString()[scoreDigit]), WIDTH-30, 150+(45*scoreDigit));
+	}	  
+
+	healthLeft = 3 - misses // set how much health is left
+	if (misses == 1 || misses == 2 || misses == 3 || misses == 0) { // If the misses are a number that is possible
+		healthLeftImage.src = "HealthImages/" + healthLeft + "HealthLeft.png" // show the health image
+	} else { // If the misses are a number that is not supposed to be possible
+		misses = 3 // Instantly fail you (because you probably cheated the number)
 	}
 	ctx.drawImage(healthLeftImage, WIDTH-34, HEIGHT-35) // Draw the audio icon that has been set
 	// Text for all your health info
+	ctx.font="10px Arial" // Reset the font size
 	ctx.fillText(misses+"/3", WIDTH-26, HEIGHT-70)
 	ctx.fillText("misses", WIDTH-35, HEIGHT-60)
 	ctx.fillText("-----------", WIDTH-38, HEIGHT-50)
