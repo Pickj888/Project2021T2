@@ -23,7 +23,7 @@ var ctx
 var canvasUpdateSpeed
 var score = 0
 var combo = 0
-var clicsTopScore = window.localStorage.getItem('clicsTopScore');
+var clicksTopScore = window.localStorage.getItem('clicksTopScore');
 var framesToCircleSpawn = 62
 var circleXPosition
 var circleYPosition
@@ -84,10 +84,21 @@ function mainMenu(){
 	// Write all of the text over the paused box
 	ctx.fillStyle="#000000a0"
 	ctx.font="50px Arial"
-	ctx.fillText(mainMenuText, 125, 85)
+	ctx.fillText(mainMenuText, 140, 85)
 	
 	ctx.fillStyle="#0000ff"
-	ctx.font="9px Arial"
+	ctx.font="17px Arial"
+	ctx.fillText("Your top score is " + clicksTopScore + "!", 350, 100)
+	if(mainMenuText == "WELCOME") {
+		ctx.fillText("Hello and welcome to this game! Here are your goals.", 40, 130)
+	} else {
+		ctx.fillText("here are your goals", 40, 130)
+	}
+	ctx.fillText("Your goal is to get as high of a score as possible.", 40, 145)
+	ctx.fillText("While it is possible to complete the game you are not supposed to.", 40, 160)
+	ctx.fillText("To play circles will be generated.", 40, 175)
+	ctx.fillText("You have to respond to the circles and click on them as fast as possible.", 40, 190)
+	ctx.fillText("While it is possible to complete the game you are not supposed to.", 40, 205)
 	
 	// Draw the cursor
 	ctx.drawImage(cursorImage, mouseXPosition, mouseYPosition)
@@ -207,17 +218,21 @@ function updateMainGame(){
 	}
 
 	if(healthLeft == 0) {
-		mainMenuText = "YOU LOST"
+		mainMenuText = "GAME OVER"
 		clearInterval(timer);			
 		menuLoad = setInterval(mainMenu, 16)
 		gameActive = 0
 		gameStarted = 0
-	} else if(score > 1000) {
+		window.localStorage.setItem('clicksTopScore', score);
+		clicksTopScore = score
+	} else if(score > 99999) {
 		mainMenuText = "YOU WIN"
 		clearInterval(timer);			
 		menuLoad = setInterval(mainMenu, 16)
 		gameActive = 0
 		gameStarted = 0
+		window.localStorage.setItem('clicksTopScore', score);
+		clicksTopScore = score
 	}
 }
 
